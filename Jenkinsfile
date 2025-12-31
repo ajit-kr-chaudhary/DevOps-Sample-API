@@ -7,14 +7,18 @@ pipeline {
                 sh '''
                     export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto.x86_64
                     export PATH=$JAVA_HOME/bin:$PATH
-                    ./gradlew clean build -x test --no-daemon'
+                    ./gradlew clean build -x test --no-daemon
                 '''
             }
         }
 
         stage('JUnit Tests') {
             steps {
-                sh './gradlew test --no-daemon'
+                sh '''
+                    export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto.x86_64
+                    export PATH=$JAVA_HOME/bin:$PATH
+                    ./gradlew test --no-daemon
+                '''
             }
             post {
                 always {
