@@ -4,7 +4,11 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh './gradlew clean build -x test --no-daemon'
+                sh '''
+                    export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto.x86_64
+                    export PATH=$JAVA_HOME/bin:$PATH
+                    ./gradlew clean build -x test --no-daemon'
+                '''
             }
         }
 
