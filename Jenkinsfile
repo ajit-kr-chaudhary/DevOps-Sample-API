@@ -2,13 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/ajit-kr-chaudhary/DevOps-Sample-API.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 sh './gradlew clean build -x test'
