@@ -4,13 +4,13 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh './gradlew clean build -x test'
+                sh './gradlew clean build -x test --no-daemon'
             }
         }
 
         stage('JUnit Tests') {
             steps {
-                sh './gradlew test'
+                sh './gradlew test --no-daemon'
             }
             post {
                 always {
