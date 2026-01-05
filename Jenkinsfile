@@ -1,12 +1,17 @@
 pipeline {
     agent any
 
+    environment {
+        JAVA_HOME = "/usr/lib/jvm/java-21-amazon-corretto.x86_64"
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+        ANSIBLE_HOME = "/root/ansible-lab"
+    }
+
     stages {
+
         stage('Build') {
             steps {
                 sh '''
-                    export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto.x86_64
-                    export PATH=$JAVA_HOME/bin:$PATH
                     ./gradlew clean build -x test --no-daemon
                 '''
             }
@@ -15,8 +20,6 @@ pipeline {
         stage('JUnit Tests') {
             steps {
                 sh '''
-                    export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto.x86_64
-                    export PATH=$JAVA_HOME/bin:$PATH
                     ./gradlew test --no-daemon
                 '''
             }
@@ -26,15 +29,23 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to DEV') {
+            steps {
+                sh '''
+                    cd $ANSIBLE_HOME
+                    ansible-playbook playbooks/deploy-dev.yml
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo 'Build & Tests successful'
+            echo 'CI + CD to DEV successful 🚀'
         }
         failure {
-            echo 'Build or Tests failed'
+            echo 'Pipeline failed ❌'
         }
     }
 }
-
