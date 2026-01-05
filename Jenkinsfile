@@ -12,7 +12,7 @@ pipeline {
     environment {
         JAVA_HOME = '/usr/lib/jvm/java-21-amazon-corretto.x86_64'
         PATH = "${JAVA_HOME}/bin:${env.PATH}"
-        ANSIBLE_HOME = '/root/ansible-lab'
+        ANSIBLE_HOME = '/opt/ansible-lab'
     }
 
     stages {
