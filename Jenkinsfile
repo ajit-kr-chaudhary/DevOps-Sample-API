@@ -1,10 +1,18 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(
+            name: 'DEPLOY_ENV',
+            choices: ['dev', 'idev', 'test', 'uat'],
+            description: 'Select environment to deploy'
+        )
+    }
+
     environment {
-        JAVA_HOME = "/usr/lib/jvm/java-21-amazon-corretto.x86_64"
+        JAVA_HOME = '/usr/lib/jvm/java-21-amazon-corretto.x86_64'
         PATH = "${JAVA_HOME}/bin:${env.PATH}"
-        ANSIBLE_HOME = "/root/ansible-lab"
+        ANSIBLE_HOME = '/root/ansible-lab'
     }
 
     stages {
@@ -30,11 +38,18 @@ pipeline {
             }
         }
 
-        stage('Deploy to DEV') {
+        stage('Approval') {
+            steps {
+                input message: "Approve deployment to ${params.DEPLOY_ENV} environment?",
+                      ok: "Deploy"
+            }
+        }
+
+        stage('Deploy') {
             steps {
                 sh '''
-                    cd $ANSIBLE_HOME
-                    ansible-playbook playbooks/deploy-dev.yml
+                    cd ${ANSIBLE_HOME}
+                    ansible-playbook playbooks/deploy-${DEPLOY_ENV}.yml
                 '''
             }
         }
@@ -42,10 +57,10 @@ pipeline {
 
     post {
         success {
-            echo 'CI + CD to DEV successful 🚀'
+            echo "CI + CD completed successfully for ${params.DEPLOY_ENV}"
         }
         failure {
-            echo 'Pipeline failed ❌'
+            echo "Pipeline failed"
         }
     }
 }
